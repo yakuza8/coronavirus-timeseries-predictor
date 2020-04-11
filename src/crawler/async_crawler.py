@@ -4,7 +4,7 @@ import logging
 from aiohttp import ClientSession
 from bs4 import BeautifulSoup
 from src.crawler.crawler_utilities import get_countries_available_today_with_urls, find_charts_and_values, \
-    get_request_header, SITE_URL, COUNTRY_DETAIL_URL
+    get_request_header, SITE_URL, COUNTRY_DETAIL_URL, export_dataset
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -30,6 +30,10 @@ async def get_today_available_county_dataset():
             tasks.append(task)
 
         await asyncio.gather(*tasks)
+
+        # Export dataset
+        export_dataset(dataset)
+
         return dataset
 
 

@@ -4,6 +4,8 @@ import yaml
 from bs4 import BeautifulSoup
 from typing import List, Tuple, Any
 
+from src.crawler.data_exporter import DataExporter
+
 SITE_URL = 'https://www.worldometers.info/coronavirus/#countries'
 COUNTRY_DETAIL_URL = 'https://www.worldometers.info/coronavirus/{0}'
 
@@ -44,12 +46,12 @@ def find_charts_and_values(country_name: str, content: BeautifulSoup) -> dict:
                            'title' in summary and 'xAxis' in summary and 'series' in summary]
 
         logging.debug('Finishing charts for {0}.'.format(country_name))
-        # Create final dictionary
+        # Create final dictionary where table name should have at least some characters
         return {
             summary['title']['text']: {
                 'x': summary['xAxis']['categories'],
                 'y': summary['series'][0]['data']
-            } for summary in chart_summaries
+            } for summary in chart_summaries if len(summary['title']['text']) > 0
         }
     except Exception as e:
         logging.error('Error occurred for {0} as {1}', country_name, e)
@@ -66,3 +68,13 @@ def get_request_header() -> dict:
     headers = {'User-Agent': user_agent}
 
     return headers
+
+
+def export_dataset(dataset: dict):
+    """
+    Simply write dataset
+    :param dataset: Dataset obtained from crawler
+    :return: Nothing
+    """
+    exporter = DataExporter()
+    exporter.write_dataset(dataset)

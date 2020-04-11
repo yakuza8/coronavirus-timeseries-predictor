@@ -4,7 +4,7 @@ import urllib.request
 
 from bs4 import BeautifulSoup
 from src.crawler.crawler_utilities import get_countries_available_today_with_urls, find_charts_and_values, \
-    get_request_header, SITE_URL, COUNTRY_DETAIL_URL
+    get_request_header, SITE_URL, COUNTRY_DETAIL_URL, export_dataset
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -32,6 +32,9 @@ class Crawler:
             data = Crawler._get_country_content(path)
             tables = find_charts_and_values(country_name, data)
             dataset[country_name] = tables
+
+        # Export dataset
+        export_dataset(dataset)
 
         return dataset
 
