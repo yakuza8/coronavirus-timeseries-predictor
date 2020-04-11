@@ -35,26 +35,26 @@ async def get_today_available_county_dataset():
 
 async def search_site(session: ClientSession) -> BeautifulSoup:
     logging.debug('Site access will be performed.')
-    site_content = await _perform_request_and_parse_url(session, SITE_URL)
+    site_content = await perform_request_and_parse_url(session, SITE_URL)
     logging.debug('Site is retrieved.')
     return site_content
 
 
 async def get_country_data_set(session: ClientSession, country_name: str, path: str, dataset: dict):
-    data = await _get_country_content(session, path)
+    data = await get_country_content(session, path)
     tables = find_charts_and_values(country_name, data)
     dataset[country_name] = tables
 
 
-async def _get_country_content(session: ClientSession, relative_path: str) -> BeautifulSoup:
+async def get_country_content(session: ClientSession, relative_path: str) -> BeautifulSoup:
     # Make country name lower and create query url
     url_for_country = COUNTRY_DETAIL_URL.format(relative_path)
-    country_content = await _perform_request_and_parse_url(session, url_for_country)
+    country_content = await perform_request_and_parse_url(session, url_for_country)
     logging.debug('{0} fetching finished.'.format(relative_path))
     return country_content
 
 
-async def _perform_request_and_parse_url(session: ClientSession, url: str) -> BeautifulSoup:
+async def perform_request_and_parse_url(session: ClientSession, url: str) -> BeautifulSoup:
     headers = get_request_header()
 
     # Prepare request
