@@ -40,9 +40,9 @@ class Crawler:
 
     @staticmethod
     def _search_site() -> BeautifulSoup:
-        logging.debug('Site access will be performed.')
+        logging.info('Site access will be performed.')
         site_content = Crawler._perform_request_and_parse_url(SITE_URL)
-        logging.debug('Site is retrieved.')
+        logging.info('Site is retrieved.')
         return site_content
 
     @staticmethod
@@ -65,6 +65,10 @@ class Crawler:
         # Parse obtained data
         parsed_data = BeautifulSoup(data, 'html.parser')
         return parsed_data
+
+
+if __name__ == '__main__':
+    Crawler.get_today_available_county_dataset()
 
 
 class CrawlerUnittest(unittest.TestCase):
@@ -92,7 +96,3 @@ class CrawlerUnittest(unittest.TestCase):
         data = Crawler._get_country_content(path)
         tables = find_charts_and_values(country, data)
         self.assertTrue(len(tables) > 0)
-
-    def test_get_dataset(self):
-        dataset = Crawler.get_today_available_county_dataset()
-        self.assertTrue(len(dataset) > 0)

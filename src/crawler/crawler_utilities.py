@@ -17,7 +17,7 @@ def get_countries_available_today_with_urls(content: BeautifulSoup) -> List[Tupl
     :return: List of tuples where tuples are in form of (country_name, relative_path_to_detail_page)
     """
 
-    logging.debug('Countries will be parsed.')
+    logging.info('Countries will be parsed.')
     countries = content.find_all('a', {'class': 'mt_a'})
     parsed_countries = list(set((country.text, country.attrs['href']) for country in countries))
     logging.debug('Countries are parsed {0} counties are fetched and they are {1}'.format(len(parsed_countries),
@@ -76,5 +76,6 @@ def export_dataset(dataset: dict):
     :param dataset: Dataset obtained from crawler
     :return: Nothing
     """
+    logging.info('Dataset completed and will be exported.')
     exporter = DataExporter()
     exporter.write_dataset(dataset)

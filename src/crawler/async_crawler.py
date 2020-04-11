@@ -38,9 +38,9 @@ async def get_today_available_county_dataset():
 
 
 async def search_site(session: ClientSession) -> BeautifulSoup:
-    logging.debug('Site access will be performed.')
+    logging.info('Site access will be performed.')
     site_content = await perform_request_and_parse_url(session, SITE_URL)
-    logging.debug('Site is retrieved.')
+    logging.info('Site is retrieved.')
     return site_content
 
 
@@ -69,6 +69,7 @@ async def perform_request_and_parse_url(session: ClientSession, url: str) -> Bea
         return parsed_data
 
 
-loop = asyncio.get_event_loop()
-future = asyncio.ensure_future(get_today_available_county_dataset())
-loop.run_until_complete(future)
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    future = asyncio.ensure_future(get_today_available_county_dataset())
+    loop.run_until_complete(future)
