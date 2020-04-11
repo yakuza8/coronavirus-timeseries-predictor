@@ -17,7 +17,7 @@ class Crawler:
     @staticmethod
     def get_today_available_county_dataset():
         """
-        Procedure to get whole daataset where first available countries are fetched then for each country corresponding
+        Procedure to get whole dataset where first available countries are fetched then for each country corresponding
         detail page is retrieved to parse data.
         :return: Dataset up to the current day with different countries in form of dictionary where country values are
         also dictionary and inside that several types of daily data exist

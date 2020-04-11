@@ -54,12 +54,14 @@ class DataExporter:
         try:
             os.mkdir('{0}'.format(directory_name))
             logging.debug('{0} directory is created in order to export data set.'.format(directory_name))
-        except FileExistsError as e:
+        except FileExistsError:
             logging.debug('{0} directory already exists.'.format(directory_name))
 
     def _write_table_content(self, country_name: str, table_name: str, table_content: dict):
         logging.debug('Country {0}\'s {1} data will be written.'.format(country_name, table_name))
-        with open('{0}/{1}/{2}.csv'.format(self.RESOURCE_FOLDER_PATH, table_name, country_name.lower()), 'w') as f:
+        with open(
+                '{0}/{1}/{2}.csv'.format(self.RESOURCE_FOLDER_PATH, table_name, '_'.join(country_name.lower().split())),
+                'w') as f:
             writer = csv.writer(f)
             writer.writerow(self.CSV_HEADERS)
             writer.writerows([(x, 0 if y is None else y) for x, y in zip(table_content['x'], table_content['y'])])
