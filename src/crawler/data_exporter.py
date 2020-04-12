@@ -64,5 +64,5 @@ class DataExporter:
                 'w') as f:
             writer = csv.writer(f)
             writer.writerow(self.CSV_HEADERS)
-            writer.writerows([(x, 0 if y is None else y) for x, y in zip(table_content['x'], table_content['y'])])
+            writer.writerows([(x, y) for x, y in zip(table_content['x'], table_content['y']) if y is not None and y != 0])
         logging.debug('Country {0}\'s {1} data export finished.'.format(country_name, table_name))
