@@ -55,7 +55,7 @@ class DatasetExtractor:
         for key, value in self.dataset.items():
             self.dataset[key] = self.scaler.transform(value)
 
-    def get_dataset(self, day_interval=7):
+    def get_dataset(self, day_interval=4):
         """
         Procedure which creates dataset with the given day duration
         :param day_interval: The day duration which results into output value
