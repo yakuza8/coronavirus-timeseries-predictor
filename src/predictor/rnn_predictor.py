@@ -29,7 +29,7 @@ def get_dataset_split(main_folder: str, target_data_folder: str):
     return data_extractor, (X_train, X_test, y_train, y_test)
 
 
-def build_model(input_dimension: int, optimizer='adam', layer1=50, layer2=50, layer3=40, dropout=0.20):
+def build_model(input_dimension: int, optimizer='Adam', layer1=50, layer2=50, layer3=40, dropout=0.20):
     # Create model as RNN with stacked LSTM layers
     predictor = Sequential()
     # First LSTM layer
