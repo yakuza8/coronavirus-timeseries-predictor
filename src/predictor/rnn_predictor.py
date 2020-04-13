@@ -20,7 +20,7 @@ def get_dataset_split(main_folder: str, target_data_folder: str):
 
     # Get dataset and reshape it
     X, y = data_extractor.get_dataset()
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.30, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
     X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 1))
     y_train = np.reshape(y_train, (y_train.shape[0], 1))
@@ -44,14 +44,14 @@ def build_model(input_dimension: int, optimizer='adam', layer1=50, layer2=50, la
     # Final output
     predictor.add(Dense(units=1))
     # Compile model
-    predictor.compile(optimizer=optimizer, loss='mean_squared_error', metrics=['accuracy'])
+    predictor.compile(optimizer=optimizer, loss='mean_squared_error', metrics=['mse', 'mae', 'mape', 'cosine'])
     return predictor
 
 
 # Get dataset and create model
 data_extractor, (X_train, X_test, y_train, y_test) = get_dataset_split(resource_folder, total_death_folder)
 model = build_model(X_train.shape[1])
-history = model.fit(X_train, y_train, epochs=100, batch_size=20)
+history = model.fit(X_train, y_train, epochs=100, batch_size=20, validation_split=0.2)
 # Evaluate model and get metrics
-train_loss, train_acc = model.evaluate(X_train, y_train, verbose=0)
-test_loss, test_acc = model.evaluate(X_test, y_test, verbose=0)
+train_evaluation = model.evaluate(X_train, y_train, verbose=0)
+test_evaluation = model.evaluate(X_test, y_test, verbose=0)
