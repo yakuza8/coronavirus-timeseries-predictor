@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 with open("README.md", "r") as readme_file:
     readme = readme_file.read()
 
-requirements = ["beautifulsoup4>=4.9.0", "aiohttp>=3.6.2", "PyYAML>=3.12"]
+requirements = ["keras==2.3.1", "pandas==1.0.3", "beautifulsoup4>=4.9.0", "aiohttp>=3.6.2", "PyYAML==5.1"]
 
 setup(
     name="coronavirus-predictor",
