@@ -152,7 +152,7 @@ def load_model_and_extractor(main_folder: str, name: str):
 
 
 if __name__ == '__main__':
-    should_built = False
+    should_built = True
     day_interval_for_rnn = 10
     resource_folder = '../../resources/'
     total_death_folder = 'Total Deaths/'
