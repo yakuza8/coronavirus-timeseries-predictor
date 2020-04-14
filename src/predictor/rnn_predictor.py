@@ -90,7 +90,7 @@ def make_series_of_prediction(_model: Sequential, _data_extractor: DatasetExtrac
 
 
 def create_time_series(_model: Sequential, _data_extractor: DatasetExtractor, data: np.ndarray, day_interval: int,
-                       prediction_count: int):
+                       prediction_count: int) -> np.ndarray:
     """
     Creating timeseries from the given data up to given prediction count and drawing function by combining given data
     and predictions on a plot
@@ -99,7 +99,7 @@ def create_time_series(_model: Sequential, _data_extractor: DatasetExtractor, da
     :param data: Data to be used for making predictions (Expected size if (x,) i.e. as a vector)
     :param day_interval: Day interval to structuring data
     :param prediction_count: Prediction count on how many predictions will be done
-    :return: None
+    :return: Made predictions
     """
     given_data_size = data.size
     if given_data_size < day_interval:
@@ -112,6 +112,8 @@ def create_time_series(_model: Sequential, _data_extractor: DatasetExtractor, da
 
     plt.plot(original_x, data, 'bo', prediction_x, predictions, 'ro')
     plt.show()
+
+    return predictions
 
 
 def dump_model_and_extractor(_model: Sequential, _data_extractor: DatasetExtractor, main_folder: str,
