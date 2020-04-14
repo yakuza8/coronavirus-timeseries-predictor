@@ -41,7 +41,7 @@ def find_charts_and_values(country_name: str, content: BeautifulSoup) -> dict:
 
     try:
         # Do not take both charts where each table has two charts in page (the second one contains logarithmic values)
-        chart_summaries = [yaml.load(chart[chart.index('{'): chart.index(');')]) for chart in charts]
+        chart_summaries = [yaml.load(chart[chart.index('{'): chart.index(');')], Loader=yaml.FullLoader) for chart in charts]
         chart_summaries = [summary for summary in chart_summaries if
                            'title' in summary and 'xAxis' in summary and 'series' in summary]
 
