@@ -2,6 +2,31 @@
 Timeseries analyzer for coronavirus with recurrent neural network
 
 ## Prediction with RNN
+For model, [Keras](https://keras.io/) library is used, and model structured as stacked recurrent neural network. In my implementation, there
+are three LSTM layers, and each of them has their own dropout layer for regularization. At the end, there is a single
+dense layer which is used for obtaining regression result. 
+
+For the feature vector, I decided to use **previous days' data with specific day interval**. In other words, the created
+RNN model maps occurred total death counts to next day's total death count. Size of feature vector can be configurable
+in implementation. You can change target directory i.e. target of training by configuring it in predictor file. I output
+crawler data so that it can be easily changed.
+
+**Note:** Still there are few data we obtained around the world. The size of data may not be applicable for training of
+such a large network. I played layer counts, neuron counts of layers, activation functions and other hyper parameters;
+however, expected numbers could deviate unexpectedly. But at least, I thought that having initial implementation for 
+such a case can be helpful for other curious people.
+
+**Note:** Because of the above concern, I do not choose to train my models on particular country (because of lack of 
+necessary data count). I choose to train my model with all data available for all countries so that maybe I can catch
+some point of direction increase in the virus spread speed collectively for all countries.  
+
+Several figures are placed here:
+
+![Total Death in Turkey](resources/Figures/turkey_total_death.png)
+
+![Total Death in Japan](resources/Figures/japan_total_death.png)
+
+![Total Death in United Kingdom](resources/Figures/uk_total_death.png)
 
 ## Crawler
 The project not just include predictor/analysis part for coronavirus, but also creation of
