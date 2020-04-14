@@ -87,3 +87,25 @@ belize.csv               channel_islands.csv         estonia.csv             gui
 benin.csv                chile.csv                   eswatini.csv            guinea.csv            kuwait.csv       mexico.csv         palestine.csv        serbia.csv                 tanzania.csv                zimbabwe.csv
 palestine.csv            serbia.csv                  tanzania.csv            zimbabwe.csv
 ```
+
+## Build
+First of all, the project needs **Python>=3.6**. To build and use the project, you need to follow following steps.
+
+```shell
+$ # You may want to activate your favorite virtual environment before doing installation
+$ git clone git@github.com:yakuza8/coronavirus-timeseries-predictor.git
+$ cd coronavirus-timeseries-predictor
+$ pip install -r requirements.txt
+$ pip install -e .
+```
+
+## Running
+There are several executable scripts that you may want to run. Let's give some examples of them.
+
+```shell
+$ # Navigate to crawler directory under src
+$ cd src/crawler
+$ python3.6 async_crawler.py                    # To get data under resources directory
+$ cd ../predictor
+$ python3.6 rnn_predictor.py                    # To train model
+```
