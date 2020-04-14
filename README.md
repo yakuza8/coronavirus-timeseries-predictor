@@ -1,5 +1,6 @@
-# coronavirus-timeseries-predictor
-Timeseries analyzer for coronavirus with recurrent neural network
+# Coronavirus Timeseries Predictor and Data Crawler
+Timeseries analyzer for coronavirus with stacked recurrent neural network and data crawler project. For further, you can
+read corresponding sections below. 
 
 ## Prediction with RNN
 For model, [Keras](https://keras.io/) library is used, and model structured as stacked recurrent neural network. In my implementation, there
@@ -42,12 +43,12 @@ detail page of particular country.
 Under crawler package, one could find the following files.
 
 ### Synchronous Crawler
-Synchronous scrapper class where HTTP requests are forwarded via **urllib** module of python.
-For parsing, [**beautifulsoup4**](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) module is used.
+Synchronous scrapper class where HTTP requests are forwarded via *urllib* module of python.
+For parsing, [beautifulsoup4](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) module is used.
 
 ### Asynchronous Crawler
-Pretty similar to synchronous counterpart with just [**aiohttp**](https://docs.aiohttp.org/en/stable/)
-take place of synchronous network access and main loop of **asyncio** controls the flow.
+Pretty similar to synchronous counterpart with just [aiohttp](https://docs.aiohttp.org/en/stable/)
+take place of synchronous network access and main loop of *asyncio* controls the flow.
 
 ### Dataset Output
 Output of obtained data is written into **CSV** formatted files under **resources** directory which
