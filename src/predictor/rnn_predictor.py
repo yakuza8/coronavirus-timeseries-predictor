@@ -32,7 +32,7 @@ def get_dataset_split(main_folder: str, target_data_folder: str, day_interval: i
     return data_extractor, (X_train, X_test, y_train, y_test)
 
 
-def build_model(input_dimension: int, optimizer='Adam', layer1=70, layer2=60, layer3=50, dropout=0.20) -> Sequential:
+def build_model(input_dimension: int, optimizer='Adam', layer1=30, layer2=20, layer3=20, dropout=0.10) -> Sequential:
     """
     Model building functionality
     """
@@ -90,7 +90,7 @@ def make_series_of_prediction(_model: Sequential, _data_extractor: DatasetExtrac
 
 
 def create_time_series(_model: Sequential, _data_extractor: DatasetExtractor, data: np.ndarray, day_interval: int,
-                       prediction_count: int) -> np.ndarray:
+                       prediction_count: int, plot_title=None, x_label=None, y_label=None) -> np.ndarray:
     """
     Creating timeseries from the given data up to given prediction count and drawing function by combining given data
     and predictions on a plot
@@ -110,7 +110,20 @@ def create_time_series(_model: Sequential, _data_extractor: DatasetExtractor, da
     original_x = np.arange(0, given_data_size)
     prediction_x = np.arange(given_data_size, given_data_size + prediction_count)
 
-    plt.plot(original_x, data, 'bo', prediction_x, predictions, 'ro')
+    plt.plot(original_x, data, 'go', label='Original data')
+    plt.plot(prediction_x, predictions, 'r+', label='Predictions')
+    plt.plot(np.concatenate([original_x, prediction_x]), np.concatenate([data, predictions]), 'k', color='grey',
+             alpha=0.3)
+
+    if plot_title is not None:
+        plt.title(plot_title)
+    if x_label is not None:
+        plt.xlabel(x_label)
+    if y_label is not None:
+        plt.ylabel(y_label)
+
+    plt.legend()
+    plt.grid()
     plt.show()
 
     return predictions
@@ -140,7 +153,7 @@ def load_model_and_extractor(main_folder: str, name: str):
 
 if __name__ == '__main__':
     should_built = False
-    day_interval_for_rnn = 4
+    day_interval_for_rnn = 10
     resource_folder = '../../resources/'
     total_death_folder = 'Total Deaths/'
 
@@ -149,7 +162,7 @@ if __name__ == '__main__':
         data_extractor, (X_train, X_test, y_train, y_test) = get_dataset_split(resource_folder, total_death_folder,
                                                                                day_interval=day_interval_for_rnn)
         model = build_model(X_train.shape[1])
-        history = model.fit(X_train, y_train, epochs=100, batch_size=20, validation_split=0.2)
+        history = model.fit(X_train, y_train, epochs=30, batch_size=20, validation_split=0.2)
 
         # Evaluate model and get metrics
         train_evaluation = model.evaluate(X_train, y_train, verbose=0)
@@ -160,5 +173,5 @@ if __name__ == '__main__':
     else:
         # Load model
         model, data_extractor = load_model_and_extractor(resource_folder, 'corona_rnn_model')
-        turkey_data = data_extractor.get_specific_country_data('turkey.csv')
-        create_time_series(model, data_extractor, turkey_data.reshape(-1), day_interval_for_rnn, 10)
+        data = data_extractor.get_specific_country_data('japan.csv')
+        predictions = create_time_series(model, data_extractor, data.reshape(-1), day_interval_for_rnn, 10, 'Total Death Count in Japan', 'Day Number', 'Total Death Count')
