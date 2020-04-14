@@ -6,9 +6,6 @@ from keras.layers import Dense, LSTM, Dropout
 from sklearn.model_selection import train_test_split
 from src.predictor.dataset_extractor import DatasetExtractor
 
-resource_folder = '../../resources/'
-total_death_folder = 'Total Deaths/'
-
 
 def get_dataset_split(main_folder: str, target_data_folder: str, day_interval: int = 4):
     """
@@ -57,7 +54,7 @@ def build_model(input_dimension: int, optimizer='Adam', layer1=70, layer2=60, la
     return predictor
 
 
-def make_prediction_with_model(_model: Sequential, _data_extractor: DatasetExtractor, _data: np.ndarray) -> int:
+def make_prediction_with_model(_model: Sequential, _data_extractor: DatasetExtractor, _data: np.ndarray) -> np.ndarray:
     """
     Predictor function over the model by applying data transformations on the givven data with the given extractor
     :param _model: Model which will perform prediction
@@ -70,7 +67,55 @@ def make_prediction_with_model(_model: Sequential, _data_extractor: DatasetExtra
     return data_extractor.inverse_scale_given_data(prediction)
 
 
-def dump_model_and_extractor(_model: Sequential, _data_extractor: DatasetExtractor, main_folder: str, name: str) -> None:
+def make_series_of_prediction(_model: Sequential, _data_extractor: DatasetExtractor, initial_data: np.ndarray,
+                              prediction_count: int) -> np.ndarray:
+    """
+    Function to make series of predictions
+    :param _model: Model which will perform prediction
+    :param _data_extractor: Data processor which will scale input and inverse scale output
+    :param initial_data: Initial data to feed model
+    :param prediction_count: Count of predictions to make
+    :return: Made prediction array
+    """
+    predictions = []
+    current_data_window = initial_data
+    for prediction_index in range(prediction_count):
+        prediction = make_prediction_with_model(_model, _data_extractor, current_data_window).item(0, 0)
+        predictions.append(prediction)
+
+        current_data_window = current_data_window[1:]
+        current_data_window = np.concatenate([current_data_window, np.array([prediction])])
+
+    return np.array(predictions)
+
+
+def create_time_series(_model: Sequential, _data_extractor: DatasetExtractor, data: np.ndarray, day_interval: int,
+                       prediction_count: int):
+    """
+    Creating timeseries from the given data up to given prediction count and drawing function by combining given data
+    and predictions on a plot
+    :param _model: Model which will perform prediction
+    :param _data_extractor: Data processor which will scale input and inverse scale output
+    :param data: Data to be used for making predictions (Expected size if (x,) i.e. as a vector)
+    :param day_interval: Day interval to structuring data
+    :param prediction_count: Prediction count on how many predictions will be done
+    :return: None
+    """
+    given_data_size = data.size
+    if given_data_size < day_interval:
+        raise RuntimeError(
+            'Not enough data is provided. Expected at least {0} number of data, but given {1}.'.format(data.size,
+                                                                                                       day_interval))
+    predictions = make_series_of_prediction(_model, _data_extractor, data[-day_interval:], prediction_count)
+    original_x = np.arange(0, given_data_size)
+    prediction_x = np.arange(given_data_size, given_data_size + prediction_count)
+
+    plt.plot(original_x, data, 'bo', prediction_x, predictions, 'ro')
+    plt.show()
+
+
+def dump_model_and_extractor(_model: Sequential, _data_extractor: DatasetExtractor, main_folder: str,
+                             name: str) -> None:
     """
     Dump model under the given main folder
     """
@@ -93,24 +138,25 @@ def load_model_and_extractor(main_folder: str, name: str):
 
 if __name__ == '__main__':
     should_built = False
+    day_interval_for_rnn = 4
+    resource_folder = '../../resources/'
+    total_death_folder = 'Total Deaths/'
 
     if should_built:
         # Get dataset and create model
-        day_interval_for_rnn = 4
         data_extractor, (X_train, X_test, y_train, y_test) = get_dataset_split(resource_folder, total_death_folder,
                                                                                day_interval=day_interval_for_rnn)
         model = build_model(X_train.shape[1])
-        history = model.fit(X_train, y_train, epochs=10, batch_size=20, validation_split=0.2)
+        history = model.fit(X_train, y_train, epochs=100, batch_size=20, validation_split=0.2)
+
         # Evaluate model and get metrics
         train_evaluation = model.evaluate(X_train, y_train, verbose=0)
         test_evaluation = model.evaluate(X_test, y_test, verbose=0)
-
-        result = make_prediction_with_model(model, data_extractor, np.array([900, 1000, 1100, 1200]))
 
         # Dump model
         dump_model_and_extractor(model, data_extractor, resource_folder, 'corona_rnn_model')
     else:
         # Load model
         model, data_extractor = load_model_and_extractor(resource_folder, 'corona_rnn_model')
-        result = make_prediction_with_model(model, data_extractor, np.array([900, 1000, 1100, 1200]))
-
+        turkey_data = data_extractor.get_specific_country_data('turkey.csv')
+        create_time_series(model, data_extractor, turkey_data.reshape(-1), day_interval_for_rnn, 10)

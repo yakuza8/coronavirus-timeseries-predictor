@@ -17,12 +17,24 @@ class DatasetExtractor:
         self.set_target_directory(target_directory)
 
     def set_target_directory(self, target_directory: str):
+        """
+        Setter of target directory by checking existence of that directory
+        :param target_directory: Target directory which will be used for main folder of data loading
+        """
         if not os.path.exists(target_directory):
             logging.error(
                 'Target directory {0} does not exist. Please reset target folder again.'.format(target_directory))
             self.target_directory = None
         else:
             pass
+
+    def get_specific_country_data(self, file_name: str):
+        """
+        Function to get specific data of the given country
+        :param file_name: File name to load data
+        """
+        csv_content = pd.read_csv('{0}{1}'.format(self.target_directory, file_name))
+        return csv_content.iloc[:, 1:2].values
 
     def load_all_data_under_target_directory(self, ignore_list=()):
         """
@@ -41,10 +53,10 @@ class DatasetExtractor:
     def load_specific_data(self, file_name: str):
         """
         Procedure to load single file under the target directory
+        :param file_name: File name of the target (Optionally: with extension .csv)
         """
         country = file_name[:file_name.index('.csv')]
-        csv_content = pd.read_csv('{0}{1}'.format(self.target_directory, file_name))
-        self.dataset[country] = csv_content.iloc[:, 1:2].values
+        self.dataset[country] = self.get_specific_country_data(file_name)
 
     def scale_loaded_data(self):
         """
