@@ -1,4 +1,4 @@
-pip==20.0.2
+pip==21.1
 wheel==0.34.2
 keras==2.3.1
 scikit-learn==0.22.2
